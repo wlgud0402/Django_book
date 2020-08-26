@@ -1,4 +1,6 @@
-from django.shortcuts import render, HttpResponse, get_object_or_404 
+from django.shortcuts import render, HttpResponse, get_object_or_404
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from .models import *
 
 
@@ -13,8 +15,21 @@ def detail(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'polls/detail.html', {'question':question})
 
-def results(request):
-    return HttpResponse("메롱")
+def results(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/results.html', {'question': question})
 
-def vote(request):
-    return HttpResponse("뇸뇸")
+def vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    try:
+        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        #설문 투표 폼을 다시 보여준다
+        return render(request, 'polls/detail.html', {'question': question, 'error_message': "You didn't select a choice.",})
+    else:
+        selected_choice.votes += 1
+        selected_choice.save()
+
+        #POST 데이터를 정상적으로 처리하였으면
+        #항상 HttpResponseRediredt
+        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
