@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, get_object_or_404 
 from .models import *
 
 
@@ -9,8 +9,9 @@ def index(request):
     context = {'latest_question_list':latest_question_list}
     return render(request, 'polls/index.html', context)
 
-def detail(request):
-    return HttpResponse("안녕")
+def detail(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/detail.html', {'question':question})
 
 def results(request):
     return HttpResponse("메롱")
