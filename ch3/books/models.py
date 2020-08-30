@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+
 class Book(models.Model):
     title = models.CharField(max_length=100)
     authors = models.ManyToManyField('Author')
@@ -27,5 +27,4 @@ class Publisher(models.Model):
 
     def __str__(self):
         return self.name
-
         
