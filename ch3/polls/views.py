@@ -2,7 +2,8 @@ from django.shortcuts import render, HttpResponse, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .models import *
-
+import logging
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 def index(request):
@@ -20,6 +21,8 @@ def results(request, question_id):
     return render(request, 'polls/results.html', {'question': question})
 
 def vote(request, question_id):
+    logger.debug("vote().question_id: %s" % question_id)
+    
     question = get_object_or_404(Question, pk=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
